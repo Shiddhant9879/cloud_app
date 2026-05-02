@@ -1,4 +1,4 @@
-package com.cloudapp.cloud_app.cloud_app.request;
+package com.cloudapp.cloud_app.cloud_app.model.request;
 
 public enum RequestStatus {
 
