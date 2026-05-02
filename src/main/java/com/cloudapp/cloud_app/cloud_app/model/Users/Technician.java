@@ -34,13 +34,9 @@ public class Technician {
     private boolean isVerified;
 
     // technician's availability status
+    @Enumerated(EnumType.STRING)
 
-    enum AvailabilityStatus {
-
-        AVAILABLE,
-        BUSY,
-        OFFLINE
-    }
+    public AvailabilityStatus status;
 
     // technician's rating
 
