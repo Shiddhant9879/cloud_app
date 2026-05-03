@@ -1,4 +1,4 @@
-package com.cloudapp.cloud_app.Repository;
+package com.cloudapp.cloud_app.cloud_app.Repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.cloudapp.cloud_app.cloud_app.model.request.ServiceRequest;

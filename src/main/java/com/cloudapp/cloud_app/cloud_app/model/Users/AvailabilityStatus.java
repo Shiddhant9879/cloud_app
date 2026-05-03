@@ -9,4 +9,6 @@ public class AvailabilityStatus {
         NotAvailable
     }
 
+    public static final String AvailabilityStatus = null;
+
 }
