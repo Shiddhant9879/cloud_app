@@ -1,82 +1,113 @@
 package com.cloudapp.cloud_app.cloud_app.Service;
 
-import com.cloudapp.cloud_app.cloud_app.Repository.TechnicianRequestRepository;
-import java.time.LocalDateTime;
-
 import org.springframework.stereotype.Service;
 
-import com.cloudapp.cloud_app.cloud_app.model.Users.AvailabilityStatus;
-import com.cloudapp.cloud_app.cloud_app.model.Users.Customer;
-import com.cloudapp.cloud_app.cloud_app.model.Users.Technician;
-import com.cloudapp.cloud_app.cloud_app.model.request.ServiceRequest;
+import com.cloudapp.cloud_app.cloud_app.Repository.CustomerRepository;
 import com.cloudapp.cloud_app.cloud_app.Repository.ServiceRequestRepository;
 import com.cloudapp.cloud_app.cloud_app.Repository.TechnicianRequestRepository;
+
+import com.cloudapp.cloud_app.cloud_app.model.Users.AvailibilityStatus;
+import com.cloudapp.cloud_app.cloud_app.model.Users.Customer;
+import com.cloudapp.cloud_app.cloud_app.model.Users.Technician;
+
 import com.cloudapp.cloud_app.cloud_app.model.request.RequestStatus;
+import com.cloudapp.cloud_app.cloud_app.model.request.ServiceRequest;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class ServiceRequestService {
 
-    private final ServiceRequestRepository servicerequestRepository;
-    private final TechnicianRequestRepository technicianRequestRepository;
+  // repositories
 
-    public ServiceRequestService(ServiceRequestRepository servicerequestRepository,
-            TechnicianRequestRepository technicianrequestRepository) {
+  private final TechnicianRequestRepository technicianRequestRepository;
+  private final ServiceRequestRepository serviceRequestRepository;
+  private final CustomerRepository customerRepository;
 
-        this.servicerequestRepository = servicerequestRepository;
-        this.technicianRequestRepository = technicianrequestRepository;
+  // constructor injection
+
+  public ServiceRequestService(
+      ServiceRequestRepository serviceRequestRepository,
+      TechnicianRequestRepository technicianRequestRepository,
+      CustomerRepository customerRepository) {
+
+    this.serviceRequestRepository = serviceRequestRepository;
+    this.technicianRequestRepository = technicianRequestRepository;
+    this.customerRepository = customerRepository;
+  }
+
+  // CREATE SERVICE REQUEST
+
+  public ServiceRequest createServiceRequest(
+      String description,
+      Customer customer) {
+
+    ServiceRequest request = new ServiceRequest();
+
+    request.setCustomer(customer);
+    request.setDescription(description);
+    request.setCreatedAt(LocalDateTime.now());
+    request.setRequest(RequestStatus.COMPLETED);
+
+    return serviceRequestRepository.save(request);
+  }
+
+  // MATCH TECHNICIAN
+
+  public ServiceRequest matchTechnician(ServiceRequest request) {
+
+    List<Technician> technicians = technicianRequestRepository
+        .findByIsVerifiedTrueAndAvailability(
+            AvailibilityStatus.Available);
+
+    if (technicians.isEmpty()) {
+
+      throw new RuntimeException(
+          "No available technicians at the moment");
     }
 
-    // make the request body here and then validate that here
+    Technician technician = technicians.get(0);
 
-    public ServiceRequest createServiceRequest(String description, Customer customer) {
+    request.setTechnician(technician);
+    request.setRequest(RequestStatus.ASSIGNED);
 
-        ServiceRequest request = new ServiceRequest();
+    technician.setStatus(AvailibilityStatus.Busy);
 
-        request.setCustomer(customer);
-        request.setDescription(description);
-        request.setCreatedAt(LocalDateTime.now());
-        request.setRequest(RequestStatus.CREATED);
+    return serviceRequestRepository.save(request);
+  }
 
-        return servicerequestRepository.save(request);
+  // START JOB
+
+  public ServiceRequest startJob(ServiceRequest request) {
+
+    if (request.getTechnician() == null) {
+
+      throw new IllegalArgumentException(
+          "No technician assigned");
     }
 
-    // method for matching all the technicians
+    request.setRequest(RequestStatus.IN_PROGRESS);
 
-    List<Technician>technicians = technicianRequestRepository.findByIsVerifiedTrueAndAvailability(AvailabilityStatus.AVAILABLE)
-    {
+    return serviceRequestRepository.save(request);
+  }
 
-        // if none of the condition matches
+  // COMPLETE JOB
 
-        if (!technicians.isEmpty()) {
+  public ServiceRequest completeJob(ServiceRequest request) {
 
-            throw new IllegalArgumentException("technician not found");
-        }
+    if (request.getTechnician() == null) {
 
-        Technician selected = technicians.get(0);
-
-        return assignTechnician(request, selected);
+      throw new IllegalArgumentException(
+          "No technician assigned");
     }
 
-    // once the technician is selected
+    request.setRequest(RequestStatus.COMPLETED);
 
-    public ServiceRequest assignTechnician(ServiceRequest request, Technician technician) {
+    Technician technician = request.getTechnician();
 
-        if (!technician.isVerified()) {
-            throw new RuntimeException("Technician not verified");
-        }
+    technician.setStatus(AvailibilityStatus.Available);
 
-        if (technician.getAvailability() != AvailabilityStatus.AVAILABLE) {
-            throw new RuntimeException("Technician not available");
-        }
-
-        request.setTechnician(technician);
-        request.setStatus(RequestStatus.ASSIGNED);
-
-        technician.setAvailability(AvailabilityStatus.BUSY);
-
-        return servicerequestRepository.save(request);
-    }
-
+    return serviceRequestRepository.save(request);
+  }
 }

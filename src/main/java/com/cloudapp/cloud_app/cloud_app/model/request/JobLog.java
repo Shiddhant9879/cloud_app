@@ -32,7 +32,7 @@ public class JobLog {
 
     // what happened
     @Enumerated(EnumType.STRING)
-    private RequestStatus status;
+    private RequestStatus request;
 
     // when it happened
     private LocalDateTime timestamp;

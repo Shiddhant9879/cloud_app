@@ -36,9 +36,10 @@ public class Technician {
     // technician's availability status
     @Enumerated(EnumType.STRING)
 
-    public AvailabilityStatus status;
+    public AvailibilityStatus status;
 
     // technician's rating
 
     private double rating;
+
 }
