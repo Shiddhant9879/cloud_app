@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface ServiceRequestRepository extends JpaRepository<ServiceRequest, Long> {
 
-    List<ServiceRequest> findByStatus(RequestStatus Status);
+    List<ServiceRequest> findByStatus(RequestStatus request);
 
 }
