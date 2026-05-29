@@ -1,5 +1,6 @@
 package com.cloudapp.cloud_app.cloud_app.model.request;
 
+import com.cloudapp.cloud_app.cloud_app.model.Payment.Payment;
 import com.cloudapp.cloud_app.cloud_app.model.Users.Customer;
 
 import com.cloudapp.cloud_app.cloud_app.model.Users.Technician;
@@ -52,6 +53,12 @@ public class ServiceRequest {
 
     @Enumerated(EnumType.STRING)
     private RequestStatus request;
+
+    // payment entity
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "payment_id", referencedColumnName = "id")
+
+    private Payment payment;
 
     // timestamp of when the request was created
 

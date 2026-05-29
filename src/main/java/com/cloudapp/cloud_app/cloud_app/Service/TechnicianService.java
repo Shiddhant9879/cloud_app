@@ -37,4 +37,11 @@ public class TechnicianService {
         return technicianrequest.save(technician);
     }
 
+    // get technician by id
+
+    public Technician getTechnicianById(long technicianId) {
+
+        return technicianrequest.findById(technicianId).orElseThrow(() -> new RuntimeException("Technician not found"));
+    }
+
 }

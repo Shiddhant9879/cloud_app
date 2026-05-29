@@ -42,4 +42,9 @@ public class Technician {
 
     private double rating;
 
+    public void setAvailibility(AvailibilityStatus newStatus) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setAvailibility'");
+    }
+
 }
