@@ -1,6 +1,7 @@
 package com.cloudapp.cloud_app.cloud_app.model.request;
 
 import com.cloudapp.cloud_app.cloud_app.model.Payment.Payment;
+import com.cloudapp.cloud_app.cloud_app.model.ServiceCategory.Servicecategory;
 import com.cloudapp.cloud_app.cloud_app.model.Users.Customer;
 
 import com.cloudapp.cloud_app.cloud_app.model.Users.Technician;
@@ -53,6 +54,10 @@ public class ServiceRequest {
 
     @Enumerated(EnumType.STRING)
     private RequestStatus request;
+
+    @Enumerated(EnumType.STRING)
+
+    private Servicecategory servicecategory;
 
     // payment entity
     @OneToOne(cascade = CascadeType.ALL)

@@ -1,5 +1,7 @@
 package com.cloudapp.cloud_app.cloud_app.model.Users;
 
+import com.cloudapp.cloud_app.cloud_app.model.ServiceCategory.Servicecategory;
+
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -41,6 +43,10 @@ public class Technician {
     // technician's rating
 
     private double rating;
+
+    @Enumerated(EnumType.STRING)
+
+    public Servicecategory work;
 
     public void setAvailibility(AvailibilityStatus newStatus) {
         // TODO Auto-generated method stub
