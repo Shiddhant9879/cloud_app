@@ -1,11 +1,13 @@
 package com.cloudapp.cloud_app.cloud_app.Service;
 
+import org.hibernate.boot.registry.classloading.spi.ClassLoaderService.Work;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 import com.cloudapp.cloud_app.cloud_app.Repository.TechnicianRequestRepository;
 import com.cloudapp.cloud_app.cloud_app.model.Users.AvailibilityStatus;
 import com.cloudapp.cloud_app.cloud_app.model.Users.Technician;
+import com.cloudapp.cloud_app.cloud_app.model.ServiceCategory.Servicecategory;
 
 @Service
 
@@ -24,7 +26,7 @@ public class TechnicianService {
 
     public List<Technician> getAvailableTechicians() {
 
-        return technicianrequest.findByIsVerifiedTrueAndAvailability(AvailibilityStatus.Available);
+        return technicianrequest.findByIsVerifiedTrueAndAvailability(AvailibilityStatus.Available, null);
     }
 
     // update technician availability

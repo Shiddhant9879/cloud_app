@@ -42,6 +42,10 @@ public class ServiceRequest {
 
     // technician assigned to the request(nullable until assigned)
 
+    // techncian distance
+
+    private Double latitude;
+    private Double longitude;
     @ManyToOne
 
     @JoinColumn(name = "technician_id", nullable = true)

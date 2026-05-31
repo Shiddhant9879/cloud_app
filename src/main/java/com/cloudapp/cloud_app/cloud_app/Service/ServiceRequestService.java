@@ -59,7 +59,7 @@ public class ServiceRequestService {
 
     List<Technician> technicians = technicianRequestRepository
         .findByIsVerifiedTrueAndAvailability(
-            AvailibilityStatus.Available);
+            AvailibilityStatus.Available, null);
 
     if (technicians.isEmpty()) {
 

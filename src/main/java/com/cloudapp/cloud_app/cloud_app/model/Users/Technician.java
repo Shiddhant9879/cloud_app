@@ -44,6 +44,11 @@ public class Technician {
 
     private double rating;
 
+    // technican distance
+
+    private Double latitude;
+    private Double longitude;
+
     @Enumerated(EnumType.STRING)
 
     public Servicecategory work;

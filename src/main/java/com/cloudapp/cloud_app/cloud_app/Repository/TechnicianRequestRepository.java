@@ -10,6 +10,6 @@ import java.util.List;
 
 public interface TechnicianRequestRepository extends JpaRepository<Technician, Long> {
 
-    List<Technician> findByIsVerifiedTrueAndAvailability(AvailibilityStatus Status, Servicecategory work);
+    List<Technician> findByIsVerifiedTrueAndAvailability(AvailibilityStatus Status, Servicecategory Work);
 
 }
