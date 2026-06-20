@@ -5,54 +5,78 @@ import org.springframework.stereotype.Service;
 import com.cloudapp.cloud_app.cloud_app.Repository.TechnicianRequestRepository;
 import com.cloudapp.cloud_app.cloud_app.model.Users.AvailibilityStatus;
 import com.cloudapp.cloud_app.cloud_app.model.Users.Technician;
+import com.cloudapp.cloud_app.cloud_app.model.request.RequestStatus;
+import com.cloudapp.cloud_app.cloud_app.model.request.ServiceRequest;
 import com.cloudapp.cloud_app.cloud_app.model.ServiceCategory.Servicecategory;
 import com.cloudapp.cloud_app.cloud_app.Repository.ServiceRequestRepository;
-import com.cloudapp.cloud_app.cloud_app.model.ServiceCategory.Servicecategory;
 import java.util.List;
 
 @Service
 
 public class MatchingEngineService {
 
-    // repo object
+    // contrucor
 
-    private final TechnicianRequestRepository technicianrequest;
-    private final ServiceRequestRepository servicerequest;
+    private final TechnicianRequestRepository technicianRequestRepository;
+    private final ServiceRequestRepository servicerequestRepository;
 
-    // constructor
+    public MatchingEngineService(TechnicianRequestRepository technicianRequestRepository,
+            ServiceRequestRepository servicerequestRepository) {
 
-    public MatchingEngineService(TechnicianRequestRepository technicianrequest,
-            ServiceRequestRepository servicerequest) {
+        this.technicianRequestRepository = technicianRequestRepository;
+        this.servicerequestRepository = servicerequestRepository;
 
-        this.technicianrequest = technicianrequest;
-        this.servicerequest = servicerequest;
     }
 
-    // method for eligible technician via the service request id
+    // phase 1 : get all available technicians and service requests plus this should
+    // add category filter also
 
-    public List<Technician> getEligibleTechniciansForRequest(long requestId) {
+    public List<Technician> getAvailableTechnicians(Servicecategory servicecategory) {
 
-        Servicecategory category = servicerequest.findById(requestId)
-                .orElseThrow(() -> new RuntimeException("Service Request not found")).getServicecategory();
-
-        return technicianrequest
-                .findByIsVerifiedTrueAndAvailability(AvailibilityStatus.Available, category);
+        return technicianRequestRepository.findByIsVerifiedTrueAndAvailability(AvailibilityStatus.Available,
+                servicecategory);
     }
 
-    // method to assign the best technician to request
+    // phase 2 : now out of the available technician who would get the job
 
-    public Technician assignTechnicianToRequest(long requestId) {
+    public Technician AssignTechnician(Long requestId) {
 
-        // to check if the list is empty
+        ServiceRequest request = servicerequestRepository.findById(requestId).orElse(null);
 
-        List<Technician> EligibleTechnicians = getEligibleTechniciansForRequest(requestId);
+        if (request == null) {
 
-        if (EligibleTechnicians.isEmpty()) {
-
-            throw new RuntimeException("No eligible technicians available for this request");
+            return null;
         }
 
-        return EligibleTechnicians.get(0);
+        List<Technician> availableTechnicians = getAvailableTechnicians(request.getServicecategory());
+
+        if (availableTechnicians.isEmpty()) {
+
+            throw new RuntimeException("No available technician is found for the request");
+        } else {
+
+            Technician assignedTechnician = availableTechnicians.get(0);
+            return assignedTechnician;
+        }
+
+    }
+
+    // phase 3 : now we have the assigned technician and the request now we can
+    // update the request with the assigned technician
+
+    public ServiceRequest updateRequestWithTechnician(Long requestId, Technician assignedTechnician) {
+
+        ServiceRequest request = servicerequestRepository.findById(requestId).orElse(null);
+
+        if (request == null) {
+
+            return null;
+        } else {
+
+            request.setTechnician(assignedTechnician);
+            request.setRequest(RequestStatus.ASSIGNED);
+            return servicerequestRepository.save(request);
+        }
     }
 
 }
