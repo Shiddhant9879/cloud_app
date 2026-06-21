@@ -31,6 +31,8 @@ public class Technician {
 
     private Users user;
 
+    private String name;
+
     // verification status of the technician
 
     private boolean isVerified;
@@ -38,7 +40,7 @@ public class Technician {
     // technician's availability status
     @Enumerated(EnumType.STRING)
 
-    public AvailibilityStatus status;
+    private AvailibilityStatus status;
 
     // technician's rating
 
@@ -52,10 +54,5 @@ public class Technician {
     @Enumerated(EnumType.STRING)
 
     public Servicecategory work;
-
-    public void setAvailibility(AvailibilityStatus newStatus) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setAvailibility'");
-    }
 
 }
