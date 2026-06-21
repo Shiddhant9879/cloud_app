@@ -55,7 +55,7 @@ public class ServiceRequestService {
 
   // MATCH TECHNICIAN
 
-  public ServiceRequest matchTechnician(ServiceRequest request) {
+  public ServiceRequest matchTechnician(Long requestId) {
 
     List<Technician> technicians = technicianRequestRepository
         .findByIsVerifiedTrueAndAvailability(
@@ -68,6 +68,9 @@ public class ServiceRequestService {
     }
 
     Technician technician = technicians.get(0);
+
+    ServiceRequest request = serviceRequestRepository.findById(requestId)
+        .orElseThrow(() -> new IllegalArgumentException("Request not found"));
 
     request.setTechnician(technician);
     request.setRequest(RequestStatus.ASSIGNED);

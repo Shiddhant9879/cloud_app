@@ -1,11 +1,11 @@
 package com.cloudapp.cloud_app.cloud_app.Controller;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.cloudapp.cloud_app.cloud_app.Service.TechnicianService;
 import com.cloudapp.cloud_app.cloud_app.model.request.ServiceRequest;
 import com.cloudapp.cloud_app.cloud_app.Service.ServiceRequestService;
+
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public class ServiceRequestController {
 
-    private ServiceRequestService serviceRequestService;
+    private final ServiceRequestService serviceRequestService;
 
     public ServiceRequestController(ServiceRequestService serviceRequestservice) {
 
@@ -29,6 +29,16 @@ public class ServiceRequestController {
 
         serviceRequestService.createServiceRequest(serviceRequest.getDescription(), serviceRequest.getCustomer());
         return "Service request created successfully";
+    }
+
+    // post mapping for matching technician using id
+
+    @PostMapping("/match-technician/{requestId}")
+
+    public String matchTechnician(@PathVariable Long requestId) {
+
+        serviceRequestService.matchTechnician(requestId);
+        return "Technician matched successfully";
     }
 
 }
