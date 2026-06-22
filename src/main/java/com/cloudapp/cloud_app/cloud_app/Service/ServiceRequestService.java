@@ -82,7 +82,10 @@ public class ServiceRequestService {
 
   // START JOB
 
-  public ServiceRequest startJob(ServiceRequest request) {
+  public ServiceRequest startJob(Long requestId) {
+
+    ServiceRequest request = serviceRequestRepository.findById(requestId)
+        .orElseThrow(() -> new IllegalArgumentException("Request not found"));
 
     if (request.getTechnician() == null) {
 
@@ -97,7 +100,10 @@ public class ServiceRequestService {
 
   // COMPLETE JOB
 
-  public ServiceRequest completeJob(ServiceRequest request) {
+  public ServiceRequest completeJob(Long requestId) {
+
+    ServiceRequest request = serviceRequestRepository.findById(requestId)
+        .orElseThrow(() -> new IllegalArgumentException("Request not found"));
 
     if (request.getTechnician() == null) {
 

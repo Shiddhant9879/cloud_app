@@ -41,4 +41,24 @@ public class ServiceRequestController {
         return "Technician matched successfully";
     }
 
+    // startjob endpoint
+
+    @PostMapping("/start-job/{requestId}")
+
+    public String startJob(@PathVariable Long requestId) {
+
+        serviceRequestService.startJob(requestId);
+        return "Job started successfully";
+    }
+
+    // completejob endpoint
+
+    @PostMapping("/complete-job/{requestId}")
+
+    public String completeJob(@PathVariable Long requestId) {
+
+        serviceRequestService.completeJob(requestId);
+        return "Job completed successfully";
+    }
+
 }
