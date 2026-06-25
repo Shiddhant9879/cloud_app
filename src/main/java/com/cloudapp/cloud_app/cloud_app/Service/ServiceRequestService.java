@@ -58,7 +58,7 @@ public class ServiceRequestService {
   public ServiceRequest matchTechnician(Long requestId) {
 
     List<Technician> technicians = technicianRequestRepository
-        .findByIsVerifiedTrueAndAvailability(
+        .findByIsVerifiedTrueAndStatusAndWork(
             AvailibilityStatus.Available, null);
 
     if (technicians.isEmpty()) {

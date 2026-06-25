@@ -1,11 +1,8 @@
 package com.cloudapp.cloud_app.cloud_app.model.Verification;
 
-public class VerificationStatus {
+public enum VerificationStatus {
 
-    enum VeificationStatus {
-
-        Pending,
-        Approved,
-        Rejected
-    }
+    Pending,
+    Approved,
+    Rejected
 }

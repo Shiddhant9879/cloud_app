@@ -28,7 +28,7 @@ public class TechnicianService {
 
     public List<Technician> getAvailableTechicians() {
 
-        return technicianrequest.findByIsVerifiedTrueAndAvailability(AvailibilityStatus.Available, null);
+        return technicianrequest.findByIsVerifiedTrueAndStatusAndWork(AvailibilityStatus.Available, null);
     }
 
     // update technician availability

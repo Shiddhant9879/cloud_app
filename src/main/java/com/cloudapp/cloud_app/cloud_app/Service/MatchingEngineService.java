@@ -33,7 +33,7 @@ public class MatchingEngineService {
 
     public List<Technician> getAvailableTechnicians(Servicecategory servicecategory) {
 
-        return technicianRequestRepository.findByIsVerifiedTrueAndAvailability(AvailibilityStatus.Available,
+        return technicianRequestRepository.findByIsVerifiedTrueAndStatusAndWork(AvailibilityStatus.Available,
                 servicecategory);
     }
 
