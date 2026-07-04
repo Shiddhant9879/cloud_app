@@ -44,13 +44,9 @@ public class ServiceRequest {
 
     // techncian distance
 
-    private Double latitude;
-    private Double longitude;
     @ManyToOne
 
     @JoinColumn(name = "technician_id", nullable = true)
-
-    @MapsId
 
     private Technician technician;
 

@@ -27,7 +27,8 @@ public class ServiceRequestController {
 
     public String createServiceRequest(@RequestBody ServiceRequest serviceRequest) {
 
-        serviceRequestService.createServiceRequest(serviceRequest.getDescription(), serviceRequest.getCustomer());
+        serviceRequestService.createServiceRequest(serviceRequest.getDescription(), serviceRequest.getCustomer(),
+                serviceRequest.getServicecategory());
         return "Service request created successfully";
     }
 
