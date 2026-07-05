@@ -8,43 +8,28 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Payments")
+@Table(name = "payments")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class Payment {
-
-    // separte primary key for payment request id
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private long id;
-
-    // connected from the requestservice
-
-    @ManyToOne
-    @JoinColumn(name = "request_id", nullable = false)
-
+    @OneToOne
+    @JoinColumn(name = "request_id", referencedColumnName = "id", nullable = false)
     private ServiceRequest serviceRequest;
-
-    // amount to be paid
 
     private BigDecimal amount;
 
-    // payment status (in enumerated value here the status selection would be from
-    // the enum class)
     @Enumerated(EnumType.STRING)
-
     private PaymentStatus paymentstatus;
-
-    // timestamps of the payment
 
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
-
 }

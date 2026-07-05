@@ -12,7 +12,7 @@ import lombok.*;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "ServiceRequests")
+@Table(name = "service_requests")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -44,10 +44,8 @@ public class ServiceRequest {
 
     // techncian distance
 
-    @ManyToOne
-
+    @ManyToOne(optional = true)
     @JoinColumn(name = "technician_id", nullable = true)
-
     private Technician technician;
 
     // status of the request(e.g., "pending", "in_progress", "completed")
@@ -60,9 +58,7 @@ public class ServiceRequest {
     private Servicecategory servicecategory;
 
     // payment entity
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "payment_id", referencedColumnName = "id")
-
+    @OneToOne(mappedBy = "serviceRequest", cascade = CascadeType.ALL)
     private Payment payment;
 
     // timestamp of when the request was created
