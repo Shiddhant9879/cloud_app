@@ -45,12 +45,13 @@ public class ServiceRequestService {
 
   public ServiceRequest createServiceRequest(
       String description,
-      Customer customer,
+      Long customerId,
       Servicecategory serviceCategory) {
 
     ServiceRequest request = new ServiceRequest();
 
-    request.setCustomer(customer);
+    request.setCustomer(
+        customerRepository.findById(customerId).orElseThrow(() -> new IllegalArgumentException("Customer not found")));
     request.setDescription(description);
     request.setServicecategory(serviceCategory);
     request.setCreatedAt(LocalDateTime.now());

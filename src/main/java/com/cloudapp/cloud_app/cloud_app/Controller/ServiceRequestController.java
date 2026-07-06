@@ -3,6 +3,7 @@ package com.cloudapp.cloud_app.cloud_app.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.cloudapp.cloud_app.cloud_app.model.request.ServiceRequest;
+import com.cloudapp.cloud_app.cloud_app.Dto.ServiceRequestDto;
 import com.cloudapp.cloud_app.cloud_app.Service.ServiceRequestService;
 
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,10 +26,11 @@ public class ServiceRequestController {
 
     @PostMapping("/create")
 
-    public String createServiceRequest(@RequestBody ServiceRequest serviceRequest) {
+    public String createServiceRequest(@RequestBody ServiceRequestDto serviceRequestdto) {
 
-        serviceRequestService.createServiceRequest(serviceRequest.getDescription(), serviceRequest.getCustomer(),
-                serviceRequest.getServicecategory());
+        serviceRequestService.createServiceRequest(serviceRequestdto.getDescription(),
+                serviceRequestdto.getCustomerId(),
+                serviceRequestdto.getServiceCategory());
         return "Service request created successfully";
     }
 
