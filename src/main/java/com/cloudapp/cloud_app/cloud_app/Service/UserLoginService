@@ -1,0 +1,18 @@
+package com.cloudapp.cloud_app.cloud_app.Service;
+import org.springframework.stereotype.Service;
+import com.cloudapp.cloud_app.cloud_app.cloud_app.Repository.UserRepository;
+
+
+@Service
+
+public class UserLoginService{
+
+private final UserRespository userrepository;
+
+public UserLoginService(UserRepository,userrepository){
+
+ this.userrepository = userrepository;
+}
+
+
+
