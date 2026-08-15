@@ -70,6 +70,6 @@ public class UserController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
-        return ResponseEntity.ok("Logout endpoint");
+        return ResponseEntity.ok("Logged out — please clear client-side token");
     }
 }
