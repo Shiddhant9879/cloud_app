@@ -3,7 +3,7 @@ package com.cloudapp.cloud_app.cloud_app.Service;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.cloudapp.cloud_app.cloud_app.Repository.UserRepository;
+import com.cloudapp.cloud_app.cloud_app.Repository.UserLoginRepository;
 import com.cloudapp.cloud_app.cloud_app.Model.User;
 
 @Service
@@ -32,4 +32,10 @@ public class UserLoginService {
 
         return user;
     }
+
+     public User RegisterUser(String email, String password){
+
+
+     }
+
 }
