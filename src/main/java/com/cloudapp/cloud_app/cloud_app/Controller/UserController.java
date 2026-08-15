@@ -21,16 +21,13 @@ public class UserController {
     private final UserLoginRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtutil;
 
     public UserController(UserLoginRepository userRepository,
             PasswordEncoder passwordEncoder,
-            AuthenticationManager authenticationManager,
-            JwtUtil jwtutil) {
+            AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
-        this.jwtutil = jwtutil;
     }
 
     @PostMapping("/register")
@@ -47,7 +44,7 @@ public class UserController {
 
         userRepository.save(user);
 
-        String token = jwtutil.buildToken(user.getUsername());
+        String token = JwtUtil.buildToken(user.getUsername());
         return ResponseEntity.ok(token);
     }
 
@@ -59,7 +56,7 @@ public class UserController {
                             request.getUsername(),
                             request.getPassword()));
 
-            String token = jwtutil.buildToken(authentication.getName());
+            String token = JwtUtil.buildToken(authentication.getName());
             return ResponseEntity.ok(token);
 
         } catch (Exception e) {
