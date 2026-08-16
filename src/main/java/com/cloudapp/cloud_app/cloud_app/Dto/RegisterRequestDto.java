@@ -1,16 +1,16 @@
 package com.cloudapp.cloud_app.cloud_app.Dto;
 
 public class RegisterRequestDto {
-    private String Username;
+    private String username;
     private String email;
     private String password;
 
     public String getUsername() {
-        return Username;
+        return username;
     }
 
     public void setUsername(String username) {
-        this.Username = username;
+        this.username = username;
     }
 
     public String getEmail() {

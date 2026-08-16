@@ -6,6 +6,8 @@ import com.cloudapp.cloud_app.cloud_app.model.Users.Users;
 import com.cloudapp.cloud_app.cloud_app.Repository.UserLoginRepository;
 import com.cloudapp.cloud_app.cloud_app.Security.JwtUtil;
 
+import java.time.LocalDateTime;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,6 +43,7 @@ public class UserController {
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setCreatedAt(LocalDateTime.now());
 
         userRepository.save(user);
 
