@@ -2,11 +2,15 @@ package com.cloudapp.cloud_app.cloud_app.Controller;
 
 import com.cloudapp.cloud_app.cloud_app.Dto.LoginRequestDto;
 import com.cloudapp.cloud_app.cloud_app.Dto.RegisterRequestDto;
+import com.cloudapp.cloud_app.cloud_app.model.Users.AvailibilityStatus;
+import com.cloudapp.cloud_app.cloud_app.model.Users.Customer;
+import com.cloudapp.cloud_app.cloud_app.model.Users.Role;
+import com.cloudapp.cloud_app.cloud_app.model.Users.Technician;
 import com.cloudapp.cloud_app.cloud_app.model.Users.Users;
+import com.cloudapp.cloud_app.cloud_app.Repository.CustomerRepository;
+import com.cloudapp.cloud_app.cloud_app.Repository.TechnicianRequestRepository;
 import com.cloudapp.cloud_app.cloud_app.Repository.UserLoginRepository;
 import com.cloudapp.cloud_app.cloud_app.Security.JwtUtil;
-
-import java.time.LocalDateTime;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +25,19 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserLoginRepository userRepository;
+    private final CustomerRepository customerRepository;
+    private final TechnicianRequestRepository technicianRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
     public UserController(UserLoginRepository userRepository,
+            CustomerRepository customerRepository,
+            TechnicianRequestRepository technicianRepository,
             PasswordEncoder passwordEncoder,
             AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
+        this.customerRepository = customerRepository;
+        this.technicianRepository = technicianRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
     }
@@ -43,9 +53,22 @@ public class UserController {
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setCreatedAt(LocalDateTime.now());
+        user.setRole(request.getRole());
 
         userRepository.save(user);
+
+        if (request.getRole() == Role.CUSTOMER) {
+            Customer customer = new Customer();
+            customer.setUser(user);
+            customerRepository.save(customer);
+        } else if (request.getRole() == Role.TECHNICIAN) {
+            Technician technician = new Technician();
+            technician.setUser(user);
+            technician.setName(user.getUsername());
+            technician.setVerified(false);
+            technician.setStatus(AvailibilityStatus.NotAvailable);
+            technicianRepository.save(technician);
+        }
 
         String token = JwtUtil.buildToken(user.getUsername());
         return ResponseEntity.ok(token);

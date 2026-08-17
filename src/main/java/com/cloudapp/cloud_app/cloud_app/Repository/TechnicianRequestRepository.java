@@ -9,9 +9,9 @@ import com.cloudapp.cloud_app.cloud_app.model.Users.AvailibilityStatus;
 import com.cloudapp.cloud_app.cloud_app.model.Users.Technician;
 
 public interface TechnicianRequestRepository
-        extends JpaRepository<Technician, Long> {
+                extends JpaRepository<Technician, Long> {
 
-    List<Technician> findByIsVerifiedTrueAndStatusAndWork(
-            AvailibilityStatus status,
-            Servicecategory work);
+        List<Technician> findByIsVerifiedTrueAndStatusAndWork(
+                        AvailibilityStatus status,
+                        Servicecategory work);
 }
