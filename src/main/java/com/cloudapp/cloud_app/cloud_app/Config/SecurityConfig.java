@@ -45,7 +45,11 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/error").permitAll()
-                        .requestMatchers("/service-requests/**", "/payments/**").authenticated()
+                        .requestMatchers("/service-requests/create", "/service-requests/match-technician/**")
+                        .hasRole("CUSTOMER")
+                        .requestMatchers("/service-requests/start-job/**", "/service-requests/complete-job/**")
+                        .hasRole("TECHNICIAN")
+                        .requestMatchers("/payments/**").authenticated()
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(
