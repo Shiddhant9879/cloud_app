@@ -6,23 +6,31 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
 public class JwtUtil {
 
-    // define a secret key and its expiration time (10 hours)
-
-    private static final String secretKeyString = "mysecretkeymysecretkeymysecretkey"; // kam se kam 32 characters HS256
-                                                                                       // ke liye
+    // Token expiry time: 10 hours.
     private static final Long expirationTime = 10 * 60 * 60 * 1000L;
 
+    private final String secretKeyString;
+
+    public JwtUtil(@Value("${jwt.secret}") String secretKeyString) {
+        this.secretKeyString = secretKeyString;
+    }
+
     // convert the secret string into a proper SecretKey object
-    private static SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(secretKeyString.getBytes());
+    private SecretKey getSigningKey() {
+        return Keys.hmacShaKeyFor(secretKeyString.getBytes(StandardCharsets.UTF_8));
     }
 
     // build the token
-    public static String buildToken(String username) {
+    public String buildToken(String username) {
 
         return Jwts.builder()
                 .subject(username)
@@ -33,7 +41,7 @@ public class JwtUtil {
     }
 
     // helper: parse token and get all claims
-    private static Claims extractAllClaims(String token) {
+    private Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()
@@ -42,12 +50,12 @@ public class JwtUtil {
     }
 
     // extract the username from token
-    public static String extractUsername(String token) {
+    public String extractUsername(String token) {
         return extractAllClaims(token).getSubject();
     }
 
     // parse and verify the token signature
-    public static boolean validateToken(String token) {
+    public boolean validateToken(String token) {
 
         try {
             extractAllClaims(token);
@@ -58,14 +66,14 @@ public class JwtUtil {
     }
 
     // check if token expired
-    public static boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
 
         Date expirationDate = extractAllClaims(token).getExpiration();
         return expirationDate.before(new Date());
     }
 
     // full verification: username + signature + expiry
-    public static boolean verifyToken(String token, String username) {
+    public boolean verifyToken(String token, String username) {
 
         String extractedUsername = extractUsername(token);
         return extractedUsername.equals(username) && validateToken(token) && !isTokenExpired(token);

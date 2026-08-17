@@ -7,8 +7,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 
-import com.cloudapp.cloud_app.cloud_app.Service.CustomUserDetailService;
-
 import io.jsonwebtoken.JwtException;
 
 import jakarta.servlet.FilterChain;
@@ -22,11 +20,14 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final CustomUserDetailService customUserDetailService;
+    private final JwtUtil jwtUtil;
 
     public JwtAuthenticationFilter(
-            CustomUserDetailService customUserDetailService) {
+            CustomUserDetailService customUserDetailService,
+            JwtUtil jwtUtil) {
 
         this.customUserDetailService = customUserDetailService;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
@@ -53,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
 
             // Extract username from token
-            String username = JwtUtil.extractUsername(token);
+            String username = jwtUtil.extractUsername(token);
 
             // Check if user is not already authenticated
             if (username != null &&
@@ -65,7 +66,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         .loadUserByUsername(username);
 
                 // Validate JWT
-                if (JwtUtil.validateToken(token)) {
+                if (jwtUtil.validateToken(token)) {
 
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
