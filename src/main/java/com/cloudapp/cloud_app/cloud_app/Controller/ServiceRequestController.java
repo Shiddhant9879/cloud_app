@@ -26,7 +26,7 @@ public class ServiceRequestController {
 
     @PostMapping("/create")
 
-    public String createServiceRequest(@RequestBody ServiceRequestDto serviceRequestdto) {
+    public String createServiceRequest(@jakarta.validation.Valid @RequestBody ServiceRequestDto serviceRequestdto) {
 
         serviceRequestService.createServiceRequest(serviceRequestdto.getDescription(),
                 serviceRequestdto.getCustomerId(),
