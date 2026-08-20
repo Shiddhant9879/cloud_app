@@ -120,6 +120,17 @@ class ServiceRequestServiceTest {
     }
 
     @Test
+    void matchTechnician_throwsWhenRequestDoesNotExist() {
+        when(serviceRequestRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () -> serviceRequestService.matchTechnician(99L));
+
+        verify(technicianRequestRepository, never())
+                .findByIsVerifiedTrueAndStatusAndWork(any(), any());
+        verify(serviceRequestRepository, never()).save(any());
+    }
+
+    @Test
     void startJob_marksAnAssignedRequestAsInProgress() {
         serviceRequest.setTechnician(technician);
         serviceRequest.setRequest(RequestStatus.ASSIGNED);
@@ -142,6 +153,15 @@ class ServiceRequestServiceTest {
     }
 
     @Test
+    void startJob_throwsWhenRequestDoesNotExist() {
+        when(serviceRequestRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () -> serviceRequestService.startJob(99L));
+
+        verify(serviceRequestRepository, never()).save(any());
+    }
+
+    @Test
     void completeJob_marksTheRequestCompletedAndMakesTechnicianAvailable() {
         serviceRequest.setTechnician(technician);
         serviceRequest.setRequest(RequestStatus.IN_PROGRESS);
@@ -154,5 +174,14 @@ class ServiceRequestServiceTest {
         assertEquals(RequestStatus.COMPLETED, result.getRequest());
         assertEquals(AvailibilityStatus.Available, technician.getStatus());
         verify(serviceRequestRepository).save(serviceRequest);
+    }
+
+    @Test
+    void completeJob_throwsWhenRequestDoesNotExist() {
+        when(serviceRequestRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () -> serviceRequestService.completeJob(99L));
+
+        verify(serviceRequestRepository, never()).save(any());
     }
 }

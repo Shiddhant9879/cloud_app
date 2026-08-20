@@ -1,0 +1,154 @@
+[33mcommit 1e28c2560a5ddd271a39d93a4ccaae1ba0cc17ff[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Shiddhant9879 <sidryanite@gmail.com>
+Date:   Tue Aug 18 04:16:33 2026 +0530
+
+    test(service): cover request and matching workflows
+
+[1mdiff --git a/mvnw.cmd b/mvnw.cmd[m
+[1mindex 92450f9..074633d 100644[m
+[1m--- a/mvnw.cmd[m
+[1m+++ b/mvnw.cmd[m
+[36m@@ -89,10 +89,11 @@[m [mif (-not (Test-Path -Path $MAVEN_M2_PATH)) {[m
+ }[m
+ [m
+ $MAVEN_WRAPPER_DISTS = $null[m
+[31m-if ((Get-Item $MAVEN_M2_PATH).Target[0] -eq $null) {[m
+[32m+[m[32m$mavenM2Item = Get-Item $MAVEN_M2_PATH[m
+[32m+[m[32mif ($null -eq $mavenM2Item.Target) {[m
+   $MAVEN_WRAPPER_DISTS = "$MAVEN_M2_PATH/wrapper/dists"[m
+ } else {[m
+[31m-  $MAVEN_WRAPPER_DISTS = (Get-Item $MAVEN_M2_PATH).Target[0] + "/wrapper/dists"[m
+[32m+[m[32m  $MAVEN_WRAPPER_DISTS = $mavenM2Item.Target[0] + "/wrapper/dists"[m
+ }[m
+ [m
+ $MAVEN_HOME_PARENT = "$MAVEN_WRAPPER_DISTS/$distributionUrlNameMain"[m
+[1mdiff --git a/src/test/java/com/cloudapp/cloud_app/cloud_app/Service/MatchingEngineServiceTest.java b/src/test/java/com/cloudapp/cloud_app/cloud_app/Service/MatchingEngineServiceTest.java[m
+[1mnew file mode 100644[m
+[1mindex 0000000..433a1c0[m
+[1m--- /dev/null[m
+[1m+++ b/src/test/java/com/cloudapp/cloud_app/cloud_app/Service/MatchingEngineServiceTest.java[m
+[36m@@ -0,0 +1,123 @@[m
+[32m+[m[32mpackage com.cloudapp.cloud_app.cloud_app.Service;[m
+[32m+[m
+[32m+[m[32mimport static org.junit.jupiter.api.Assertions.assertEquals;[m
+[32m+[m[32mimport static org.junit.jupiter.api.Assertions.assertNull;[m
+[32m+[m[32mimport static org.junit.jupiter.api.Assertions.assertSame;[m
+[32m+[m[32mimport static org.junit.jupiter.api.Assertions.assertThrows;[m
+[32m+[m[32mimport static org.mockito.ArgumentMatchers.any;[m
+[32m+[m[32mimport static org.mockito.Mockito.never;[m
+[32m+[m[32mimport static org.mockito.Mockito.verify;[m
+[32m+[m[32mimport static org.mockito.Mockito.when;[m
+[32m+[m
+[32m+[m[32mimport java.util.List;[m
+[32m+[m[32mimport java.util.Optional;[m
+[32m+[m
+[32m+[m[32mimport org.junit.jupiter.api.BeforeEach;[m
+[32m+[m[32mimport org.junit.jupiter.api.Test;[m
+[32m+[m[32mimport org.junit.jupiter.api.extension.ExtendWith;[m
+[32m+[m[32mimport org.mockito.InjectMocks;[m
+[32m+[m[32mimport org.mockito.Mock;[m
+[32m+[m[32mimport org.mockito.junit.jupiter.MockitoExtension;[m
+[32m+[m
+[32m+[m[32mimport com.cloudapp.cloud_app.cloud_app.Repository.ServiceRequestRepository;[m
+[32m+[m[32mimport com.cloudapp.cloud_app.cloud_app.Repository.TechnicianRequestRepository;[m
+[32m+[m[32mimport com.cloudapp.cloud_app.cloud_app.model.ServiceCategory.Servicecategory;[m
+[32m+[m[32mimport com.cloudapp.cloud_app.cloud_app.model.Users.AvailibilityStatus;[m
+[32m+[m[32mimport com.cloudapp.cloud_app.cloud_app.model.Users.Technician;[m
+[32m+[m[32mimport com.cloudapp.cloud_app.cloud_app.model.request.RequestStatus;[m
+[32m+[m[32mimport com.cloudapp.cloud_app.cloud_app.model.request.ServiceRequest;[m
+[32m+[m
+[32m+[m[32m@ExtendWith(MockitoExtension.class)[m
+[32m+[m[32mclass MatchingEngineServiceTest {[m
+[32m+[m
+[32m+[m[32m    @Mock[m
+[32m+[m[32m    private TechnicianRequestRepository technicianRequestRepository;[m
+[32m+[m
+[32m+[m[32m    @Mock[m
+[32m+[m[32m    private ServiceRequestRepository serviceRequestRepository;[m
+[32m+[m
+[32m+[m[32m    @InjectMocks[m
+[32m+[m[32m    private MatchingEngineService matchingEngineService;[m
+[32m+[m
+[32m+[m[32m    private ServiceRequest serviceRequest;[m
+[32m+[m[32m    private Technician technician;[m
+[32m+[m
+[32m+[m[32m    @BeforeEach[m
+[32m+[m[32m    void setUp() {[m
+[32m+[m[32m        serviceRequest = new ServiceRequest();[m
+[32m+[m[32m        serviceRequest.setId(1L);[m
+[32m+[m[32m        serviceRequest.setServicecategory(Servicecategory.AC_REPAIR);[m
+[32m+[m
+[32m+[m[32m        technician = new Technician();[m
+[32m+[m[32m        technician.setId(10L);[m
+[32m+[m[32m        technician.setStatus(AvailibilityStatus.Available);[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Test[m
+[32m+[m[32m    void getAvailableTechnicians_returnsEligibleTechniciansFromRepository() {[m
+[32m+[m[32m        when(technicianRequestRepository.findByIsVerifiedTrueAndStatusAndWork([m
+[32m+[m[32m                AvailibilityStatus.Available, Servicecategory.AC_REPAIR))[m
+[32m+[m[32m                .thenReturn(List.of(technician));[m
+[32m+[m
+[32m+[m[32m        List<Technician> result = matchingEngineService.getAvailableTechnicians(Servicecategory.AC_REPAIR);[m
+[32m+[m
+[32m+[m[32m        assertEquals(List.of(technician), result);[m
+[32m+[m[32m        verify(technicianRequestRepository).findByIsVerifiedTrueAndStatusAndWork([m
+[32m+[m[32m                AvailibilityStatus.Available, Servicecategory.AC_REPAIR);[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Test[m
+[32m+[m[32m    void assignTechnician_returnsTheFirstEligibleTechnician() {[m
+[32m+[m[32m        when(serviceRequestRepository.findById(1L)).thenReturn(Optional.of(serviceRequest));[m
+[32m+[m[32m        when(technicianRequestRepository.findByIsVerifiedTrueAndStatusAndWork([m
+[32m+[m[32m                AvailibilityStatus.Available, Servicecategory.AC_REPAIR))[m
+[32m+[m[32m                .thenReturn(List.of(technician));[m
+[32m+[m
+[32m+[m[32m        Technician result = matchingEngineService.AssignTechnician(1L);[m
+[32m+[m
+[32m+[m[32m        assertSame(technician, result);[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Test[m
+[32m+[m[32m    void assignTechnician_returnsNullWhenRequestDoesNotExist() {[m
+[32m+[m[32m        when(serviceRequestRepository.findById(99L)).thenReturn(Optional.empty());[m
+[32m+[m
+[32m+[m[32m        Technician result = matchingEngineService.AssignTechnician(99L);[m
+[32m+[m
+[32m+[m[32m        assertNull(result);[m
+[32m+[m[32m        verify(technicianRequestRepository, never())[m
+[32m+[m[32m                .findByIsVerifiedTrueAndStatusAndWork(any(), any());[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Test[m
+[32m+[m[32m    void assignTechnician_throwsWhenNoEligibleTechnicianExists() {[m
+[32m+[m[32m        when(serviceRequestRepository.findById(1L)).thenReturn(Optional.of(serviceRequest));[m
+[32m+[m[32m        when(technicianRequestRepository.findByIsVerifiedTrueAndStatusAndWork([m
+[32m+[m[32m                AvailibilityStatus.Available, Servicecategory.AC_REPAIR))[m
+[32m+[m[32m                .thenReturn(List.of());[m
+[32m+[m
+[32m+[m[32m        assertThrows(RuntimeException.class, () -> matchingEngineService.AssignTechnician(1L));[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Test[m
+[32m+[m[32m    void updateRequestWithTechnician_assignsTechnicianAndSavesRequest() {[m
+[32m+[m[32m        when(serviceRequestRepository.findById(1L)).thenReturn(Optional.of(serviceRequest));[m
+[32m+[m[32m        when(serviceRequestRepository.save(serviceRequest)).thenReturn(serviceRequest);[m
+[32m+[m
+[32m+[m[32m        ServiceRequest result = matchingEngineService.updateRequestWithTechnician(1L, technician);[m
+[32m+[m
+[32m+[m[32m        assertSame(technician, result.getTechnician());[m
+[32m+[m[32m        assertEquals(RequestStatus.ASSIGNED, result.getRequest());[m
+[32m+[m[32m        verify(serviceRequestRepository).save(serviceRequest);[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Test[m
+[32m+[m[32m    void updateRequestWithTechnician_returnsNullWhenRequestDoesNotExist() {[m
+[32m+[m[32m        when(serviceRequestRepository.findById(99L)).thenReturn(Optional.empty());[m
+[32m+[m
+[32m+[m[32m        ServiceRequest result = matchingEngineService.updateRequestWithTechnician(99L, technician);[m
+[32m+[m
+[32m+[m[32m        assertNull(result);[m
+[32m+[m[32m        verify(serviceRequestRepository, never()).save(any());[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[1md
