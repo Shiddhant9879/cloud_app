@@ -6,7 +6,12 @@ pipeline{
      stages{
 
         // stage for checkout with scm = github repo
+     
+      tools{
+         maven 'Maven3'
+      }
 
+      
         stage('checkout'){
 
             steps{
