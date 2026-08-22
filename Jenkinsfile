@@ -11,7 +11,7 @@ pipeline{
 
             steps{
 
-                checkout scm
+              echo 'checkout the code'
             }
         }
 
@@ -21,7 +21,7 @@ pipeline{
 
             steps{
 
-                sh'mvn test'
+                bat'mvn test'
             }
         }
 
@@ -29,7 +29,7 @@ pipeline{
 
             steps{
 
-                sh'maven package'
+                bat'maven package'
             }
         }
 
