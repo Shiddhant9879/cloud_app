@@ -29,7 +29,7 @@ pipeline{
 
             steps{
 
-                bat'maven package'
+                bat'mavn package'
             }
         }
 
