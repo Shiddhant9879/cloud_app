@@ -1,43 +1,29 @@
-pipeline{
+pipeline {
 
-     agent any
+    agent any
 
+    tools {
+        maven 'Maven3'
+    }
 
-     stages{
+    stages {
 
-        // stage for checkout with scm = github repo
-     
-      tools{
-         maven 'Maven3'
-      }
-
-      
-        stage('checkout'){
-
-            steps{
-
-              echo 'checkout the code'
+        stage('checkout') {
+            steps {
+                echo 'checkout the code'
             }
         }
 
-        // stage for the testing 
-
-        stage('test'){
-
-            steps{
-
-                bat'mvn test'
+        stage('test') {
+            steps {
+                bat 'mvn test'
             }
         }
 
-        stage('package'){
-
-            steps{
-
-                bat'mavn package'
+        stage('package') {
+            steps {
+                bat 'mvn package'
             }
         }
-
-
-     }
+    }
 }
